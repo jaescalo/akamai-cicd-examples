@@ -1,0 +1,35 @@
+# Akamai Pipeline Demo
+
+default:
+  image: akamai/property-manager
+
+# Available environments: dev, prod
+variables:
+  ENVIRONMENT: 'gitops-dev'
+  PIPELINE_NAME: 'demo.com'
+
+stages:
+  - build
+  - deploy
+  - test
+
+build:
+  stage: build
+  script:
+  - echo -e "[papi]\nclient_secret = $CLIENT_SECRET\nhost = $HOST\naccess_token = $ACCESS_TOKEN\nclient_token = $CLIENT_TOKEN" > .edgerc
+  - akamai pipeline merge  -n -v -p $PIPELINE_NAME $ENVIRONMENT --edgerc $CI_PROJECT_DIR/.edgerc
+  - akamai property-manager property-update -p $ENVIRONMENT.$PIPELINE_NAME --file $CI_PROJECT_DIR/$PIPELINE_NAME/dist/$ENVIRONMENT.$PIPELINE_NAME.papi.json --message "Created By GitLab-$CI_JOB_NAME-$CI_JOB_ID; Commit $CI_COMMIT_REF_NAME" --edgerc $CI_PROJECT_DIR/.edgerc --accountSwitchKey $ACCOUNT_KEY
+  
+deploy:
+  stage: deploy
+  script:
+  - echo -e "[papi]\nclient_secret = $CLIENT_SECRET\nhost = $HOST\naccess_token = $ACCESS_TOKEN\nclient_token = $CLIENT_TOKEN" > .edgerc
+  - akamai property-manager activate-version -p $ENVIRONMENT.$PIPELINE_NAME --network staging --wait-for-activate --edgerc $CI_PROJECT_DIR/.edgerc --accountSwitchKey $ACCOUNT_KEY
+
+test:
+  stage: test
+  image: 
+    name: postman/newman
+    entrypoint: [""]
+  script: 
+  - newman run $CI_PROJECT_DIR/$PIPELINE_NAME/tests/environments/$ENVIRONMENT/$ENVIRONMENT.$PIPELINE_NAME.postman_collection.json --bail

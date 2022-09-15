@@ -1,0 +1,83 @@
+# Akamai Property Manager, Cloudlet & Test Center Pipeline
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+# Properties and Test policies definition as well as CLI parameters that are common to all the commands.
+variables:
+  ENVIRONMENT: 'gitops-dev'
+  PIPELINE_NAME: 'demo.com'
+  CLOUDLET_POLICY_NAME: 'jaescalo_ER_test'
+  TEST_SUITE_ID: '38135'
+  CLI_ADDITIONAL_PARAMETERS: '--edgerc ./.edgerc --section default'
+
+# The stages: because each stage is run on a different agent the .edgerc needs to be recreated on each stage and the secret varialbles must be initiated as well. 
+
+# The first stage updates the property and deploys it
+stages:
+- stage: UpdateProperty
+  jobs:
+  - job: UpdateJob
+    displayName: 'Build Property Rule Tree and Update Property'
+    steps:
+    - script: |
+        echo -e "[default]\nclient_secret = $ENV_CLIENT_SECRET\nhost = $ENV_HOST\naccess_token = $ENV_ACCESS_TOKEN\nclient_token = $ENV_CLIENT_TOKEN" > .edgerc
+
+        docker run --rm -v "$(pwd)":/workdir akamai/property-manager akamai pipeline merge -n -v -p $(PIPELINE_NAME) $(ENVIRONMENT)
+
+        docker run --rm -v "$(pwd)":/workdir akamai/property-manager akamai property-manager property-update -p $(ENVIRONMENT).$(PIPELINE_NAME) --file ./$(PIPELINE_NAME)/dist/$(ENVIRONMENT).$(PIPELINE_NAME).papi.json --message "Created By Azure DevOps; Commit-$BUILD_SOURCEVERSION - $BUILD_SOURCEVERSIONMESSAGE" --accountSwitchKey $ENV_ACCOUNT_KEY $(CLI_ADDITIONAL_PARAMETERS)
+
+        docker run --rm -v "$(pwd)":/workdir akamai/property-manager akamai property-manager activate-version -p $(ENVIRONMENT).$(PIPELINE_NAME) --network staging --wait-for-activate --accountSwitchKey $ENV_ACCOUNT_KEY $(CLI_ADDITIONAL_PARAMETERS)
+
+      env:
+        ENV_CLIENT_SECRET: $(CLIENT_SECRET)
+        ENV_HOST: $(HOST)
+        ENV_ACCESS_TOKEN: $(ACCESS_TOKEN)
+        ENV_CLIENT_TOKEN: $(CLIENT_TOKEN)
+        ENV_ACCOUNT_KEY: $(ACCOUNT_KEY)           
+
+# The second stage makes the change to the Edge Redirector Cloudlet policy and activates it
+- stage: DeployCloudlet
+  jobs:
+  - job: DeployJob
+    displayName: 'Deploy Cloudlet'
+    steps:
+    - script: |
+        echo -e "[default]\nclient_secret = $ENV_CLIENT_SECRET\nhost = $ENV_HOST\naccess_token = $ENV_ACCESS_TOKEN\nclient_token = $ENV_CLIENT_TOKEN" > .edgerc
+
+        docker run --rm -v "$(pwd)":/workdir akamai/cloudlets akamai cloudlets --account-key $ENV_ACCOUNT_KEY $(CLI_ADDITIONAL_PARAMETERS) update --policy $(CLOUDLET_POLICY_NAME) --file ./cloudlets/environments/$(ENVIRONMENT)/$(ENVIRONMENT).$(PIPELINE_NAME).cloudlet_rules.json --notes "Deployed by Azure DevOps Commit-$BUILD_SOURCEVERSION - $BUILD_SOURCEVERSIONMESSAGE"
+
+        docker run --rm -v "$(pwd)":/workdir akamai/cloudlets akamai cloudlets --account-key $ENV_ACCOUNT_KEY $(CLI_ADDITIONAL_PARAMETERS) activate --policy $(CLOUDLET_POLICY_NAME) --network staging
+      env:
+        ENV_CLIENT_SECRET: $(CLIENT_SECRET)
+        ENV_HOST: $(HOST)
+        ENV_ACCESS_TOKEN: $(ACCESS_TOKEN)
+        ENV_CLIENT_TOKEN: $(CLIENT_TOKEN)
+        ENV_ACCOUNT_KEY: $(ACCOUNT_KEY)
+
+# The last stage updates the Test Center test suite and runs it      
+- stage: TestProperty
+  jobs:
+  - job: TestJob
+    displayName: 'Test New Behaviors'
+    steps:
+    - script: |
+        echo -e "[default]\nclient_secret = $ENV_CLIENT_SECRET\nhost = $ENV_HOST\naccess_token = $ENV_ACCESS_TOKEN\nclient_token = $ENV_CLIENT_TOKEN" > .edgerc
+
+        docker run --rm -v "$(pwd)":/workdir jaimescalona/akamai-test-center /bin/sh -c "akamai test-center --account-key $ENV_ACCOUNT_KEY $(CLI_ADDITIONAL_PARAMETERS) test-suite manage < ./tests/environments/$(ENVIRONMENT)/$(ENVIRONMENT).$(PIPELINE_NAME).test_suite.json"
+
+        docker run --rm -v "$(pwd)":/workdir jaimescalona/akamai-test-center akamai test-center --account-key $ENV_ACCOUNT_KEY $(CLI_ADDITIONAL_PARAMETERS) test-suite view --id $(TEST_SUITE_ID) --json > $(ENVIRONMENT).$(PIPELINE_NAME).test_suite_updated.json
+
+        docker run --rm -v "$(pwd)":/workdir jaimescalona/akamai-test-center akamai test-center --account-key $ENV_ACCOUNT_KEY $(CLI_ADDITIONAL_PARAMETERS) test --test-suite-id $(TEST_SUITE_ID)
+      env:
+        ENV_CLIENT_SECRET: $(CLIENT_SECRET)
+        ENV_HOST: $(HOST)
+        ENV_ACCESS_TOKEN: $(ACCESS_TOKEN)
+        ENV_CLIENT_TOKEN: $(CLIENT_TOKEN)
+        ENV_ACCOUNT_KEY: $(ACCOUNT_KEY)
+    - publish: $(ENVIRONMENT).$(PIPELINE_NAME).test_suite_updated.json
+      artifact: $(ENVIRONMENT).$(PIPELINE_NAME).test_suite_updated.json
+      

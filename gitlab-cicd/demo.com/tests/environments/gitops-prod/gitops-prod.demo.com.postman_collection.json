@@ -1,0 +1,52 @@
+{
+	"info": {
+		"_postman_id": "a415b87f-bcc0-465c-b323-f777160d396f",
+		"name": "Demo Test Suites",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "200 Ok",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"X-Akamai-Staging is ESSL\", function () {",
+							"    pm.response.to.have.header(\"X-Akamai-Staging\");",
+							"    pm.expect(pm.response.headers.has(\"X-Akamai-Staging\",\"ESSL\")).is.true;",
+							"});",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"This is the PROD Environment\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://prod-jaescalo.test.edgekey-staging.net/prod/",
+					"protocol": "http",
+					"host": [
+						"prod-jaescalo",
+						"test",
+						"edgekey-staging",
+						"net"
+					],
+					"path": [
+						"prod",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,308 @@
+{
+  "createdBy": "jaescalo",
+  "createdDate": "2022-09-08T23:30:30+0000",
+  "modifiedBy": "jaescalo",
+  "modifiedDate": "2022-09-08T23:30:30+0000",
+  "testSuiteId": 38135,
+  "testSuiteName": "gitops-dev.demo.com Test Suite",
+  "isLocked": false,
+  "isStateful": false,
+  "testCaseCount": 18,
+  "configs": {
+    "propertyManager": {
+      "propertyId": 833331,
+      "propertyName": "gitops-dev.demo.com",
+      "propertyVersion": 1
+    }
+  },
+  "testCases": [
+    {
+      "testCaseId": 362021,
+      "order": 1,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Caching option is cache with max-age of \"30\" days"
+      }
+    },
+    {
+      "testCaseId": 362022,
+      "order": 2,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Last mile acceleration (Gzip compression) - The response is gzipped"
+      }
+    },
+    {
+      "testCaseId": 362023,
+      "order": 3,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "SureRoute is enabled"
+      }
+    },
+    {
+      "testCaseId": 362024,
+      "order": 4,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Origin server - Cache key hostname is \"\""
+      }
+    },
+    {
+      "testCaseId": 362025,
+      "order": 5,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Caching option is cache with max-age of \"7\" days"
+      }
+    },
+    {
+      "testCaseId": 362026,
+      "order": 6,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Log request details - Accept-Language header is not logged"
+      }
+    },
+    {
+      "testCaseId": 362027,
+      "order": 7,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Content provider code is \"1271126\""
+      }
+    },
+    {
+      "testCaseId": 362028,
+      "order": 8,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Log request details - Custom data is not logged"
+      }
+    },
+    {
+      "testCaseId": 362029,
+      "order": 9,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Prefetch objects - Object prefetching is triggered"
+      }
+    },
+    {
+      "testCaseId": 362030,
+      "order": 10,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Prefetch objects - Object prefetching is not triggered"
+      }
+    },
+    {
+      "testCaseId": 362031,
+      "order": 11,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Log request details - Cookies not logged"
+      }
+    },
+    {
+      "testCaseId": 362032,
+      "order": 12,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Caching option is no-store"
+      }
+    },
+    {
+      "testCaseId": 362033,
+      "order": 13,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Caching option is cache with max-age of \"1\" days"
+      }
+    },
+    {
+      "testCaseId": 362034,
+      "order": 14,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Log request details - Referrer header is not logged"
+      }
+    },
+    {
+      "testCaseId": 362035,
+      "order": 15,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Log request details - Host header is not logged"
+      }
+    },
+    {
+      "testCaseId": 362036,
+      "order": 16,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Response header \"OTHER\" does not exist"
+      }
+    },
+    {
+      "testCaseId": 362037,
+      "order": 17,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Log request details - User-Agent header is not logged"
+      }
+    },
+    {
+      "testCaseId": 362038,
+      "order": 18,
+      "testRequest": {
+        "testRequestUrl": "{{protocol}}://{{host}}{{path}}",
+        "requestMethod": "GET"
+      },
+      "clientProfile": {
+        "ipVersion": "IPV4",
+        "clientType": "BROWSER"
+      },
+      "condition": {
+        "conditionExpression": "Tiered distribution is enabled"
+      }
+    }
+  ],
+  "variables": [
+    {
+      "variableId": 2580,
+      "variableName": "path",
+      "variableValue": "/demo-site/"
+    },
+    {
+      "variableId": 2582,
+      "variableName": "protocol",
+      "variableValue": "https"
+    },
+    {
+      "variableId": 2581,
+      "variableName": "host",
+      "variableValue": "jaescalo.test.edgekey-staging.net"
+    }
+  ]
+}
+

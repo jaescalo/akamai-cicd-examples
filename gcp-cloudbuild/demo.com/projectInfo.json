@@ -1,0 +1,7 @@
+{
+    "environments": [
+        "gitops-dev",
+        "gitops-prod"
+    ],
+    "name": "demo.com"
+}

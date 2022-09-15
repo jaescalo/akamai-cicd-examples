@@ -1,0 +1,242 @@
+{
+    "matchRules": [
+        {
+            "type": "erMatchRule",
+            "id": 0,
+            "name": "Redirect /3",
+            "start": 0,
+            "end": 0,
+            "matchURL": null,
+            "matches": [
+                {
+                    "matchValue": "https",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "protocol"
+                },
+                {
+                    "matchValue": "jaescalo.test.edgekey-staging.net jaescalo.test.edgekey.net",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "hostname"
+                },
+                {
+                    "matchValue": "/redirector/3",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "path"
+                }
+            ],
+            "statusCode": 302,
+            "redirectURL": "/",
+            "useIncomingQueryString": true,
+            "useRelativeUrl": "relative_url"
+        },
+        {
+            "type": "erMatchRule",
+            "id": 0,
+            "name": "Redirect /2",
+            "start": 0,
+            "end": 0,
+            "matchURL": null,
+            "matches": [
+                {
+                    "matchValue": "https",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "protocol"
+                },
+                {
+                    "matchValue": "jaescalo.test.edgekey-staging.net jaescalo.test.edgekey.net",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "hostname"
+                },
+                {
+                    "matchValue": "/redirector/2",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "path"
+                }
+            ],
+            "statusCode": 302,
+            "redirectURL": "/",
+            "useIncomingQueryString": true,
+            "useRelativeUrl": "relative_url"
+        },
+        {
+            "type": "erMatchRule",
+            "id": 0,
+            "name": "Redirect /1",
+            "start": 0,
+            "end": 0,
+            "matchURL": null,
+            "matches": [
+                {
+                    "matchValue": "https",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "protocol"
+                },
+                {
+                    "matchValue": "jaescalo.test.edgekey-staging.net jaescalo.test.edgekey.net",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "hostname"
+                },
+                {
+                    "matchValue": "/redirector/1",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "path"
+                }
+            ],
+            "statusCode": 302,
+            "redirectURL": "/",
+            "useIncomingQueryString": true,
+            "useRelativeUrl": "relative_url"
+        },
+        {
+            "type": "erMatchRule",
+            "id": 0,
+            "name": "Relative Use Relative URL",
+            "start": 0,
+            "end": 0,
+            "matchURL": null,
+            "matches": [
+                {
+                    "matchValue": "https",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "protocol"
+                },
+                {
+                    "matchValue": "jaescalo.test.edgekey-staging.net jaescalo.test.edgekey.net",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "hostname"
+                },
+                {
+                    "matchValue": "/redirector/home/",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "path"
+                }
+            ],
+            "statusCode": 302,
+            "redirectURL": "/home.html",
+            "useIncomingQueryString": true,
+            "useRelativeUrl": "relative_url"
+        },
+        {
+            "type": "erMatchRule",
+            "id": 0,
+            "name": "Relative Copy Protocol and Hostname",
+            "start": 0,
+            "end": 0,
+            "matchURL": null,
+            "matches": [
+                {
+                    "matchValue": "https",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "protocol"
+                },
+                {
+                    "matchValue": "jaescalo.test.edgekey-staging.net jaescalo.test.edgekey.net",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "hostname"
+                },
+                {
+                    "matchValue": "/redirector/info/",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "path"
+                }
+            ],
+            "statusCode": 302,
+            "redirectURL": "/info",
+            "useIncomingQueryString": false,
+            "useIncomingSchemeAndHost": true,
+            "useRelativeUrl": "copy_scheme_hostname"
+        },
+        {
+            "type": "erMatchRule",
+            "id": 0,
+            "name": "Relative None",
+            "start": 0,
+            "end": 0,
+            "matchURL": null,
+            "matches": [
+                {
+                    "matchValue": "https",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "protocol"
+                },
+                {
+                    "matchValue": "jaescalo.test.edgekey-staging.net jaescalo.test.edgekey.net",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "hostname"
+                },
+                {
+                    "matchValue": "/redirector/store/",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "path"
+                }
+            ],
+            "statusCode": 301,
+            "redirectURL": "https://jaescalo.store",
+            "useIncomingQueryString": false,
+            "useRelativeUrl": "none"
+        },
+        {
+            "type": "erMatchRule",
+            "id": 0,
+            "name": "Regex Test",
+            "start": 0,
+            "end": 0,
+            "matchURL": null,
+            "matches": [
+                {
+                    "matchValue": "/redirector/shop/*",
+                    "matchOperator": "contains",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "path"
+                },
+                {
+                    "matchValue": "http://jaescalo.test.edge.*.net/redirector/shop/(.*)",
+                    "matchOperator": "equals",
+                    "negate": false,
+                    "caseSensitive": false,
+                    "matchType": "regex"
+                }
+            ],
+            "statusCode": 301,
+            "redirectURL": "https://jaescalo.test.edgekey.net/\\1",
+            "useIncomingQueryString": false
+        }
+    ]
+}
