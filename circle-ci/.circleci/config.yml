@@ -1,0 +1,116 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+orbs: 
+  newman: postman/newman@0.0.2
+
+parameters:
+  edgekv:
+    type: boolean
+    default: false
+  production:
+    type: boolean
+    default: false
+
+executors:
+  akamai-ew-cli-docker:
+    docker:
+      - image: akamai/edgeworkers
+    working_directory: /root/edgeworkers
+    environment:
+      EWVERSION: 5.50
+      EWID: 4885
+      BUNDLENAME: ew-bundle.tgz
+
+jobs:
+  build:
+    executor: akamai-ew-cli-docker
+    steps:
+      - checkout
+      - run: 
+          name: "Build .edgerc file"
+          command: echo -e "[default]\nclient_secret = $CLIENT_SECRET\nhost = $HOST\naccess_token = $ACCESS_TOKEN\nclient_token = $CLIENT_TOKEN" > .edgerc
+      - when: 
+          condition: << pipeline.parameters.edgekv >>
+          steps: 
+            - run: 
+                name: "Add token to edgekv_tokens.js file"
+                command: |
+                  sed -i 's|EDGEKV_NAMESPACE|'$EDGEKV_NAMESPACE'|g' edgekv_tokens.js
+                  sed -i 's|EDGEKV_TOKEN_NAME|'$EDGEKV_TOKEN_NAME'|g' edgekv_tokens.js
+                  sed -i 's|EDGEKV_TOKEN_VALUE|'$EDGEKV_TOKEN_VALUE'|g' edgekv_tokens.js   
+      - run:
+          name: "Create and Upload Artifact"
+          command: |
+            tar -czvf ./$BUNDLENAME $( find -name "*.js" -or -name "*.json" | cut -c 3-)
+            akamai ew upload --bundle ./$BUNDLENAME $EWID --edgerc /root/edgeworkers/.edgerc --accountkey $ACCOUNTKEY
+      - persist_to_workspace:
+          root: ~/
+          paths: edgeworkers
+      - store_artifacts:
+          path: ew-bundle.tgz
+  
+  deploy:
+    executor: akamai-ew-cli-docker
+    steps:  
+      - attach_workspace:
+          at: /root
+      - run: 
+          name: "Activate EdgeWorkers to Staging"
+          command: |
+            export EWVERSION=$(awk -F'"' 'NR==2 {print $4}' bundle.json) >> "$BASH_ENV"
+            akamai ew activate $EWID STAGING ${EWVERSION} --edgerc /root/edgeworkers/.edgerc --accountkey $ACCOUNTKEY
+            akamai ew status $EWID --versionId ${EWVERSION} --edgerc /root/edgeworkers/.edgerc --accountkey $ACCOUNTKEY    
+      - when: 
+          condition: << pipeline.parameters.production >>
+          steps: 
+            - run: 
+                name: "Activate EdgeWorkers to Production"
+                command: akamai ew activate $EWID PRODUCTION ${EWVERSION} --edgerc /root/edgeworkers/.edgerc --accountkey $ACCOUNTKEY
+      - run:
+          name: "Activation in Progress"
+          command: while :; do OUTPUT=`akamai ew status $EWID --versionId ${EWVERSION} --edgerc /root/edgeworkers/.edgerc --accountkey $ACCOUNTKEY | awk '/PRESUBMIT|PENDING|IN_PROGRESS/ { print $4 }'`; if [ -z $OUTPUT ]; then echo Activation COMPLETE; break; else sleep 5; fi; done
+
+  debug:
+    executor: akamai-ew-cli-docker
+    steps:  
+      - attach_workspace:
+          at: /root
+      - run: 
+          name: "Enable Enhanced Debugging Token"
+          command: |
+            # This only enables the debugging header as a first step for testing, but more testing logic can be added
+            akamai ew --edgerc /root/edgeworkers/.edgerc --accountkey $ACCOUNTKEY auth --expiry 60 --acl / --network staging $HOSTNAME || true 
+
+  test:
+    executor: newman/postman-newman-docker
+    steps:  
+      - checkout
+      - newman/newman-run:
+          collection: https://www.getpostman.com/collections/23635fa6dc0a1b47183d
+          additional-options: --bail
+
+workflows:
+  ew_pipeline:
+    jobs:
+      - build:
+          context:
+            - edgerc
+      - deploy:
+          requires:
+            - build
+          context:
+            - edgerc
+      - debug:
+          requires:
+            - deploy
+          context:
+            - edgerc
+          post-steps:
+            - run: 
+                name: "Remove .edgerc"
+                command: rm -r .edgerc
+      - test:
+          requires:
+            - deploy
+
