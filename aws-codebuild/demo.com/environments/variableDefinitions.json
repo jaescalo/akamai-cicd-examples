@@ -1,0 +1,12 @@
+{
+    "definitions": {
+        "PMUSER_ORIGIN_value": {
+            "type": "userVariableValue",
+            "default": null
+        }, 
+        "cpCode": {
+            "type": "string",
+            "default": 1271126
+        }
+    }
+}

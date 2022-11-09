@@ -1,0 +1,8 @@
+[
+    {
+        "cnameFrom": "gitops-new.demo.com",
+        "cnameTo": "jaescalo.test.edgekey.net",
+        "cnameType": "EDGE_HOSTNAME",
+        "edgeHostnameId": 4874468
+    }
+]
