@@ -5,6 +5,8 @@
 # Akamai as Code on Various CI/CD Providers
 
 Examples of various CI/CD implementations for Akamai as Code:
+* [AWS CodeBuild](https://aws.amazon.com/codebuild/): update and deploy a property on **Property Manager**
+
 * [Azure Devops](https://azure.microsoft.com/en-us/products/devops/): update and deploy a property on **Property Manager**, update and deploy **Cloudlet** and modify and run test in **Akamai Test Center**
 
 * [CircleCI](https://circleci.com/): update and deploy a new **EdgeWorkers** version and generate debug header
