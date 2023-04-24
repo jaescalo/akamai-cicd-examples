@@ -1,0 +1,32 @@
+pipeline {
+    agent {
+      docker { 
+        image 'postman/newman' 
+        args "--entrypoint=''"
+      }
+    }
+    parameters {
+        string(name: 'ENVIRONMENT', defaultValue: '', description: 'Environment to build i.e. gitops-dev, gitops-prod, etc.')
+    }
+    environment {
+        PIPELINE_NAME = 'demo.com'
+    }
+    stages {
+        stage('Checkout main branch') {
+            steps {
+              checkout([$class: 'GitSCM', 
+                branches: [[name: '*/main']],
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [[$class: 'CleanCheckout']],
+                submoduleCfg: [], 
+                userRemoteConfigs: [[url: 'https://github.com/jaescalo/akamai-pipeline-jenkins.git']]])
+          }
+        }
+        
+        stage('Test') {
+            steps {
+                sh 'newman run ./$PIPELINE_NAME/test/environments/$ENVIRONMENT/$ENVIRONMENT.$PIPELINE_NAME.postman_collection.json --bail'
+            }
+        }
+    }
+}
