@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - './github-actions-terraform/*'
+      - 'github-actions-terraform/*'
       - '.github/workflows/akamai_pm.yaml'
 
 jobs:
