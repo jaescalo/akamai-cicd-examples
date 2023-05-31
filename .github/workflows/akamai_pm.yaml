@@ -1,11 +1,11 @@
-name: Sync Infrastructure via Terraform
+name: Akamai Property Manager
 on: 
   workflow_dispatch:
   push: 
     branches:
       - main
     paths:
-      - 'rules.tf'
+      - './github-actions-terraform/*'
       - '.github/workflows/akamai_pm.yaml'
 
 jobs:
