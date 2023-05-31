@@ -1,9 +1,9 @@
-# Akamai Property Deployed by Terraform in GitHub Actions
+# Akamai Property Deployed by GitHub Actions with Terraform and Linode Backend
 
 This is a demo on how to manage existing Akamai properties as code by leveraging the [Akamai Terraform Provider](https://techdocs.akamai.com/terraform/docs) in a GitHub Workflow:
 
 * GitHub Actions used to run the workflow that executes Terraform to update the Akamai Property.
-* Terraform's state file is stored remotely in Linode's Object Storage (S3).
+* Terraform's state file is stored remotely in Linode's Object Storage (S3 compatible).
 * Terraform updates and activates a property based on the changes performed to the rule tree. 
 
 ## Prerequisites
