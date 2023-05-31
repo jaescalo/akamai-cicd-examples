@@ -34,6 +34,11 @@ variable "property_name" {
 }
 
 variable "hostname" {
+  type    = string
+  default = "gitops-prod.demo.com"
+}
+
+variable "emails" {
   type    = list(string)
   default = ["noreply@akamai.com"]
 }
