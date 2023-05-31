@@ -418,7 +418,7 @@ data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_css_and_java_scr
       caching {
         behavior        = "MAX_AGE"
         must_revalidate = false
-        ttl             = "1d"
+        ttl             = "2d"
       }
     }
   }
