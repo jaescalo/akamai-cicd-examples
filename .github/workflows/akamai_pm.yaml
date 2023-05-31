@@ -42,9 +42,12 @@ jobs:
           cat << EOF > ./github-actions-terraform/terraform.tfvars
           env="staging"
           EOF
-      - name: Terraform nit
+      - name: Terraform Init
         run: terraform -chdir=./github-actions-terraform init -backend-config=backend
+      - name: Terraform Import
+        run: sh ./github-actions-terraform/import.sh
       - name: Terraform Validate 
         run: terraform -chdir=./github-actions-terraform validate -no-color
       - name: Terraform Apply Changes 
-        run: terraform -chdir=./github-actions-terraform apply -auto-approve
+        run: terraform -chdir=./github-actions-terraform plan
+        #run: terraform -chdir=./github-actions-terraform apply -auto-approve
