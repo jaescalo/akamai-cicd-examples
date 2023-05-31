@@ -8,12 +8,6 @@ on:
       - './github-actions-terraform/*'
       - '.github/workflows/akamai_pm.yaml'
 
-env:
-  TF_VAR_akamai_client_secret: "${{ secrets.AKAMAI_CREDENTIAL_CLIENT_SECRET }}"
-  TF_VAR_akamai_host: "${{ secrets.AKAMAI_CREDENTIAL_HOST }}"
-  TF_VAR_akamai_access_token: "${{ secrets.AKAMAI_CREDENTIAL_ACCESS_TOKEN }}"
-  TF_VAR_akamai_client_token: "${{ secrets.AKAMAI_CREDENTIAL_CLIENT_TOKEN }}"
-
 jobs:
   terraform:
     name: Akamai Property Apply Terraform 
@@ -25,7 +19,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.4.6
-      - name: Add Terraform Backend for S3
+      - name: Add Linode S3 Backend for Terraform
         run: |
           cat << EOF > ./github-actions-terraform/backend
           skip_credentials_validation=true
@@ -45,6 +39,11 @@ jobs:
       - name: Terraform nit
         run: terraform -chdir=./github-actions-terraform init -backend-config=backend
       - name: Terraform Validate 
+        env:
+          TF_VAR_akamai_client_secret: "${{ secrets.AKAMAI_CREDENTIAL_CLIENT_SECRET }}"
+          TF_VAR_akamai_host: "${{ secrets.AKAMAI_CREDENTIAL_HOST }}"
+          TF_VAR_akamai_access_token: "${{ secrets.AKAMAI_CREDENTIAL_ACCESS_TOKEN }}"
+          TF_VAR_akamai_client_token: "${{ secrets.AKAMAI_CREDENTIAL_CLIENT_TOKEN }}"
         run: terraform -chdir=./github-actions-terraform validate -no-color
       - name: Terraform Apply Changes 
         run: terraform -chdir=./github-actions-terraform apply -auto-approve
