@@ -8,6 +8,12 @@ on:
       - './github-actions-terraform/*'
       - '.github/workflows/akamai_pm.yaml'
 
+env:
+  TF_VAR_akamai_client_secret: "${{ secrets.AKAMAI_CREDENTIAL_CLIENT_SECRET }}"
+  TF_VAR_akamai_host: "${{ secrets.AKAMAI_CREDENTIAL_HOST }}"
+  TF_VAR_akamai_access_token: "${{ secrets.AKAMAI_CREDENTIAL_ACCESS_TOKEN }}"
+  TF_VAR_akamai_client_token: "${{ secrets.AKAMAI_CREDENTIAL_CLIENT_TOKEN }}"
+
 jobs:
   terraform:
     name: Akamai Property Apply Terraform 
