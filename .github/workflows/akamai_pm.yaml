@@ -21,7 +21,7 @@ jobs:
           terraform_version: 1.4.6
       - name: Add Terraform Backend for S3
         run: |
-          cat << EOF > ./backend
+          cat << EOF > ./github-actions-terraform/backend
           skip_credentials_validation=true
           skip_region_validation=true
           bucket="${{ secrets.LINODE_OBJECT_STORAGE_BUCKET }}"
@@ -33,12 +33,12 @@ jobs:
           EOF
       - name: Add Terraform TFVars
         run: |
-          cat << EOF > ./terraform.tfvars
+          cat << EOF > ./github-actions-terraform/terraform.tfvars
           env="staging"
           EOF
-      - name: Terraform Init
-        run: terraform init -backend-config=backend
+      - name: Terraform nit
+        run: terraform -chdir=./github-actions-terraform init -backend-config=backend
       - name: Terraform Validate 
-        run: terraform validate -no-color
+        run: terraform -chdir=./github-actions-terraform validate -no-color
       - name: Terraform Apply Changes 
-        run: terraform apply -auto-approve
+        run: terraform -chdir=./github-actions-terraform apply -auto-approve
