@@ -7,16 +7,16 @@ This is a demo on how to manage existing Akamai properties as code by leveraging
 * Terraform updates and activates a property based on the changes performed to the rule tree. 
 
 ## Prerequisites
-- [Akamai API Credentials](https://techdocs.akamai.com/developer/docs/set-up-authentication-credentials) for Cloudlets and Test Center. Also familiarize with concepts related to the .edgerc (location, section, account-key). These will be used in the pipeline code but removed from this writing for simplification.
+- [Akamai API Credentials](https://techdocs.akamai.com/developer/docs/set-up-authentication-credentials). Also familiarize with concepts related to the `.edgerc` file.
 - [Akamai Terraform Provider](https://techdocs.akamai.com/terraform/docs)
 - [Akamai CLI for Terraform](https://github.com/akamai/cli-terraform)
 - Basic Understanding of [GitHub Actions](https://docs.github.com/en/actions) and setting up [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
 - [Linode Object Storage](https://www.linode.com/lp/object-storage/) bucket with Access Keys created for storing Terraform's state file.
  
 ## Prepare Properties for Akamai as Code
-Perhaps the most important step is to prepare the target properties for management via the pipeline framework.
+Perhaps the most important step is to prepare the target properties for management via Akamai as Code:
 
-* Pipeline should be based on a production property (i.e. www.example.com NOT qa.example.com)
+* The code should be based on a production property (i.e. www.example.com NOT qa.example.com)
 * If desired, perform a configuration clean-up (i.e. remove duplicated rules/behaviors, parameterize behaviors/matches, etc) which can help reduce the code length.
 * All advanced rules and matches need to be converted first to [Akamai Custom Behaviors](https://developer.akamai.com/blog/2018/04/26/custom-behaviors-property-manager-papi) or to the Property Manager behaviors/matches if possible. If there is an advanced override section this can also be converted to a custom advanced override.
 * Freeze the rule tree to a specific version to avoid future catalog updates that could turn the current Akamai as Code incompatible.
@@ -53,3 +53,17 @@ Additionally for the S3 compatible Linode Object Storage the following Secret Re
 In the `.github/workflows/akamai_pm.yaml` these variables are referenced to build the Terraform configurations.
 * The Akamai variables are used to perform operations on the property such as create, update and destroy during the `terraform apply` step. Observe that these are passed as 
 * The Linode variables are used to build the Terraform's backend configuration which then is passed to TF during the `terraform init` command.
+
+## Import Existing Property
+Often times you want to manage an existing resource on Akamai via Terraform. For this to be successful the initial Terraform state must be created. This can be done by executing the `import.sh` script which runs the necessary `terraform import` commands for all the resources exported by the Akamai Terraform CLI.
+
+In the `.github/workflows/akamai_pm.yaml` you will find this step, however it is commented out, and the reason is because it was executed on the very first run just to get the Terraform state generated. After that initial run you can comment it out or just remove it from the GitHub workflow code.
+
+## Resources
+- [Akamai API Credentials](https://techdocs.akamai.com/developer/docs/set-up-authentication-credentials)
+- [Akamai Terraform Provider](https://techdocs.akamai.com/terraform/docs)
+- [Akamai CLI for Terraform](https://github.com/akamai/cli-terraform)
+- [Linode Object Storage](https://www.linode.com/lp/object-storage/)
+- [Akamai Docker](https://github.com/akamai/akamai-docker)
+- [Akamai Developer Youtube Channel](https://www.youtube.com/c/AkamaiDeveloper)
+- [Akamai Github](https://github.com/akamai)
