@@ -9,7 +9,9 @@ terraform {
     }
   }
   required_version = ">= 0.13"
-  # Linode S3 is our remote backend and we'll pass the configuration parameters with the TF "-backend-config" flag as this block doesn't allow the use of variables. See the ./github/workflows/akamai_pm.yaml.
+  # Linode S3 is our remote backend and we'll pass the configuration parameters with 
+  # the TF "-backend-config" flag as this block doesn't allow the use of variables. 
+  # See the ./github/workflows/akamai_pm.yaml.
   backend "s3" {}
 }
 

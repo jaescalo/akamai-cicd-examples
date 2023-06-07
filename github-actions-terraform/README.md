@@ -51,7 +51,7 @@ Additionally for the S3 compatible Linode Object Storage the following Secret Re
 - LINODE_OBJECT_STORAGE_SECRET_KEY = secret key for the Object Storage
 
 In the `.github/workflows/akamai_pm.yaml` these variables are referenced to build the Terraform configurations.
-* The Akamai variables are used to perform operations on the property such as create, update and destroy during the `terraform apply` step. Observe that these are passed as 
+* The Akamai variables are used to perform operations on the property such as create, update and destroy during the `terraform apply` step. Observe that these are passed as `TF_VAR_*` TF environment variables that TF can recognize.
 * The Linode variables are used to build the Terraform's backend configuration which then is passed to TF during the `terraform init` command.
 
 ## Import Existing Property
