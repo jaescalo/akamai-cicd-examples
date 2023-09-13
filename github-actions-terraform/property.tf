@@ -29,9 +29,10 @@ resource "akamai_property" "gitops-prod-demo-com" {
 }
 
 resource "akamai_property_activation" "gitops-prod-demo-com" {
-  property_id = akamai_property.gitops-prod-demo-com.id
-  contact     = var.emails
-  version     = akamai_property.gitops-prod-demo-com.latest_version
-  network     = upper(var.env)
-  note        = "Property Manager CLI Activation"
+  property_id                    = akamai_property.gitops-prod-demo-com.id
+  contact                        = var.emails
+  version                        = akamai_property.gitops-prod-demo-com.latest_version
+  network                        = upper(var.env)
+  note                           = "Property Manager CLI Activation"
+  auto_acknowledge_rule_warnings = true
 }

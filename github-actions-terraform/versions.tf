@@ -2,7 +2,7 @@ terraform {
   required_providers {
     akamai = {
       source  = "akamai/akamai"
-      version = ">= 3.5.0"
+      version = "= 5.2.0"
     }
     linode = {
       source = "linode/linode"
@@ -19,8 +19,8 @@ terraform {
 provider "akamai" {
   config {
     client_secret = var.akamai_client_secret
-    host = var.akamai_host
-    access_token = var.akamai_access_token
-    client_token = var.akamai_client_token
+    host          = var.akamai_host
+    access_token  = var.akamai_access_token
+    client_token  = var.akamai_client_token
   }
 }
