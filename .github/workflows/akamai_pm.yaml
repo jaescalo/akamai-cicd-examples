@@ -5,42 +5,38 @@ on:
     branches:
       - main
     paths:
-      - 'github-actions-terraform/*'
-      - '.github/workflows/akamai_pm.yaml'
+      - 'rules.tf'
 
 env:
   TF_VAR_akamai_client_secret: "${{ secrets.AKAMAI_CREDENTIAL_CLIENT_SECRET }}"
   TF_VAR_akamai_host: "${{ secrets.AKAMAI_CREDENTIAL_HOST }}"
   TF_VAR_akamai_access_token: "${{ secrets.AKAMAI_CREDENTIAL_ACCESS_TOKEN }}"
   TF_VAR_akamai_client_token: "${{ secrets.AKAMAI_CREDENTIAL_CLIENT_TOKEN }}"
+  TF_VAR_akamai_account_key: "${{ secrets.AKAMAI_ACCOUNT_KEY}}"
+  TF_VAR_activation_notes: "${{ github.repository }} run #${{ github.run_number }} Commit ${{ github.sha }}"
 
 jobs:
   terraform:
-    name: Akamai Property Apply Terraform 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.4.6
       - name: Add Linode S3 Backend for Terraform
         run: |
-          cat << EOF > ./github-actions-terraform/backend
+          echo $TF_VAR_activation_notes
+          cat << EOF > ./github-actions-terraform /backend
           skip_credentials_validation=true
           skip_region_validation=true
           bucket="${{ secrets.LINODE_OBJECT_STORAGE_BUCKET }}"
-          key="tf-akamai.tfstate"
-          region="us-southeast-1"
-          endpoint="us-southeast-1.linodeobjects.com"
+          key="rule-tree-sample.tfstate"
+          region="us-mia-1"
+          endpoint="us-mia-1.linodeobjects.com"
           access_key="${{ secrets.LINODE_OBJECT_STORAGE_ACCESS_KEY }}"
           secret_key="${{ secrets.LINODE_OBJECT_STORAGE_SECRET_KEY }}"
-          EOF
-      - name: Add Terraform TFVars
-        run: |
-          cat << EOF > ./github-actions-terraform/terraform.tfvars
-          env="staging"
           EOF
       - name: Terraform Init
         run: terraform -chdir=./github-actions-terraform init -backend-config=backend
@@ -51,3 +47,31 @@ jobs:
         run: terraform -chdir=./github-actions-terraform validate -no-color
       - name: Terraform Apply Changes 
         run: terraform -chdir=./github-actions-terraform apply -auto-approve
+
+  akamai-pm:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./github-actions-terraform
+    needs: terraform
+    container:
+      image: akamai/shell:v2.19.0
+    steps:  
+    - uses: actions/checkout@v4
+    - name: Update Rule Tree Artifact
+      run: |
+        export PROPERTY_NAME=$(grep 'property_name' terraform.auto.tfvars | awk -F'"' '{print $2}')    
+        python3 ./scripts/ak_get_rule_tree.py $PROPERTY_NAME
+        git config --global --add safe.directory /__w/rule_tree_sample/rule_tree_sample
+    - name: Commit changes
+      uses: EndBug/add-and-commit@v9
+      with:
+        default_author: github_actions
+        message: "Update Rule Tree Artifact in Repository"
+        add: './dist/rule_tree_sample.json'
+    - name: Store Rule Tree as Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: sample-rule-tree
+        path: dist/*.json
+      

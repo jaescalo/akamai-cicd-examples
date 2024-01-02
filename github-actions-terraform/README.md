@@ -1,15 +1,16 @@
-# Akamai Property Deployed by GitHub Actions with Terraform and Linode Backend
+# Akamai PM: Terraform | Linode S3 | Auto Commit Rule Tree
 
-This is a demo on how to manage existing Akamai properties as code by leveraging the [Akamai Terraform Provider](https://techdocs.akamai.com/terraform/docs) in a GitHub Workflow:
+This is a demo on how to manage existing Akamai properties as code by leveraging the [Akamai Terraform Provider](https://techdocs.akamai.com/terraform/docs) in a GitHub Workflow. 
 
 * GitHub Actions used to run the workflow that executes Terraform to update the Akamai Property.
 * Terraform's state file is stored remotely in Linode's Object Storage (S3 compatible).
 * Terraform updates and activates a property based on the changes performed to the rule tree. 
+* The akamai/shell Docker Image is used to run a Python script that downloads the final rule tree from Akamai Property Manager. This rule tree is the JSON representation of the rule tree and is commited back to the repository and saved as an artifact.
 
 ## Prerequisites
 - [Akamai API Credentials](https://techdocs.akamai.com/developer/docs/set-up-authentication-credentials). Also familiarize with concepts related to the `.edgerc` file.
 - [Akamai Terraform Provider](https://techdocs.akamai.com/terraform/docs)
-- [Akamai CLI for Terraform](https://github.com/akamai/cli-terraform)
+- [Akamai Docker Images](https://hub.docker.com/u/akamai/)
 - Basic Understanding of [GitHub Actions](https://docs.github.com/en/actions) and setting up [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
 - [Linode Object Storage](https://www.linode.com/lp/object-storage/) bucket with Access Keys created for storing Terraform's state file.
  
@@ -36,13 +37,25 @@ After running the above all the necessary terraform files will be created plus t
 Optionally (but highly recommended), a remote backed to store the Terraform state file is recommended. For testing and experimenting it is okay to keep the state file locally though. 
 For this demo an S3 compatible [Linode Object Storage](https://www.linode.com/lp/object-storage/) bucket was setup to store Terraform's state file. 
 
-## GitHub Actions Setup
+## Rule Tree Artifact
+Once the new property version has been pushed out to Akamai the rule tree is downloaded via the API in a Python script (look under `./scripts`). The rule tree is automatically commited under `./dist` and also stored as an artifact in the workflow run.
+
+The reason why the rule tree is commited back is because the rule tree that represents the current state in production can be referenced by other applications for other workflows or use cases. The particular use case for this repository is to use this rule tree for comparison if a change to the property occurred outside of the current workflow.
+
+### Why not use the Akamai PM CLI?
+Different tools may output slightly different rule tree structures, whether you use Terraform, Akamai CLI, scripting or the API direclty. To standarize the output a simple Python script will be used. 
+
+## GitHub Workflow Setup
 For this demo, temporary Akamai API Credentials credentials are stored as Secret Repository variables. The naming convention for the variables used is:
 
 - AKAMAI_CREDENTIAL_CLIENT_SECRET = Akamai `client_secret` credential
 - AKAMAI_CREDENTIAL_HOST = Akamai `host` credential
 - AKAMAI_CREDENTIAL_ACCESS_TOKEN = Akamai `access_token` credential
 - AKAMAI_CREDENTIAL_CLIENT_TOKEN = Akamai `client_token` credential
+
+As an option you can specify the Account Switch Key if needed:
+
+- AKAMAI_ACCOUNT_KEY = Akamai account key for the account
 
 Additionally for the S3 compatible Linode Object Storage the following Secret Repository variables are required:
 
@@ -53,6 +66,11 @@ Additionally for the S3 compatible Linode Object Storage the following Secret Re
 In the `.github/workflows/akamai_pm.yaml` these variables are referenced to build the Terraform configurations.
 * The Akamai variables are used to perform operations on the property such as create, update and destroy during the `terraform apply` step. Observe that these are passed as `TF_VAR_*` TF environment variables that TF can recognize.
 * The Linode variables are used to build the Terraform's backend configuration which then is passed to TF during the `terraform init` command.
+
+### GitHub Actions
+Two main GitHub actions play a role in this workflow:
+- actions/checkout@v4: setup for git operations
+- hashicorp/setup-terraform@v2: setup for Terraform
 
 ## Import Existing Property
 Often times you want to manage an existing resource on Akamai via Terraform. For this to be successful the initial Terraform state must be created. This can be done by executing the `import.sh` script which runs the necessary `terraform import` commands for all the resources exported by the Akamai Terraform CLI.

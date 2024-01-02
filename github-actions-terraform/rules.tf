@@ -1,284 +1,53 @@
 
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_default" {
-  rules_v2023_01_05 {
+data "akamai_property_rules_builder" "dev-gitlab-pipeline-demo_rule_default" {
+  rules_v2023_10_30 {
     name      = "default"
     is_secure = true
-    comments  = "The Default Rule template contains all the necessary and recommended behaviors. Rules are evaluated from top to bottom and the last matching rule wins."
-    variable {
-      name        = "PMUSER_ORIGIN"
-      description = ""
-      value       = "gitops-prod.alternate-origin.demo.com"
-      hidden      = false
-      sensitive   = false
-    }
+    comments  = "The behaviors in the Default Rule apply to all requests for the property hostname(s) unless another rule overrides the Default Rule settings."
     behavior {
       origin {
-        cache_key_hostname            = "REQUEST_HOST_HEADER"
-        compress                      = true
-        enable_true_client_ip         = true
-        forward_host_header           = "REQUEST_HOST_HEADER"
-        hostname                      = "{{user.PMUSER_ORIGIN}}"
-        http_port                     = 80
-        https_port                    = 443
-        ip_version                    = "IPV4"
-        origin_certificate            = ""
-        origin_sni                    = true
-        origin_type                   = "CUSTOMER"
-        ports                         = ""
-        true_client_ip_client_setting = false
-        true_client_ip_header         = "True-Client-IP"
-        verification_mode             = "PLATFORM_SETTINGS"
-      }
-    }
-    children = [
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_augment_insights.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_accelerate_delivery.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_offload_origin.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_strengthen_security.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_increase_availability.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_minimize_payload.json,
-    ]
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_augment_insights" {
-  rules_v2023_01_05 {
-    name                  = "Augment insights"
-    comments              = "Control the settings related to monitoring and reporting. This gives you additional visibility into your traffic and audiences."
-    criteria_must_satisfy = "all"
-    children = [
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_traffic_reporting.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_m_pulse_rum.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_geolocation.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_log_delivery.json,
-    ]
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_accelerate_delivery" {
-  rules_v2023_01_05 {
-    name                  = "Accelerate delivery"
-    comments              = "Control the settings related to improving the performance of delivering objects to your users."
-    criteria_must_satisfy = "all"
-    children = [
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_origin_connectivity.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_protocol_optimizations.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_prefetching.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_adaptive_acceleration.json,
-    ]
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_offload_origin" {
-  rules_v2023_01_05 {
-    name                  = "Offload origin"
-    comments              = "Control the settings related to caching content at the edge and in the browser. As a result, fewer requests go to your origin, fewer bytes leave your data centers, and your assets are closer to your users."
-    criteria_must_satisfy = "all"
-    behavior {
-      caching {
-        behavior = "NO_STORE"
+        net_storage {
+          cp_code              = 405092
+          download_domain_name = "gsstrip.download.akamai.com"
+          g2o_token            = "405092=6G96eY0RZK5O3Eb2xYVFzfzt8Pn8fZ37Cnv93266KVNB1U6VF1"
+        }
+        origin_type = "NET_STORAGE"
       }
     }
     behavior {
-      tiered_distribution {
-        enabled = true
+      base_directory {
+        value = "/jaescalo/static-sites/"
       }
     }
-    behavior {
-      validate_entity_tag {
-        enabled = false
-      }
-    }
-    behavior {
-      remove_vary {
-        enabled = false
-      }
-    }
-    behavior {
-      cache_error {
-        enabled        = true
-        preserve_stale = true
-        ttl            = "10s"
-      }
-    }
-    behavior {
-      cache_key_query_params {
-        behavior = "INCLUDE_ALL_ALPHABETIZE_ORDER"
-      }
-    }
-    behavior {
-      prefresh_cache {
-        enabled     = true
-        prefreshval = 90
-      }
-    }
-    behavior {
-      downstream_cache {
-        allow_behavior = "LESSER"
-        behavior       = "ALLOW"
-        send_headers   = "CACHE_CONTROL"
-        send_private   = false
-      }
-    }
-    children = [
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_css_and_java_script.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_fonts.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_images.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_files.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_other_static_objects.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_html_pages.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_redirects.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_post_responses.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_graph_ql.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_uncacheable_objects.json,
-    ]
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_strengthen_security" {
-  rules_v2023_01_05 {
-    name                  = "Strengthen security"
-    comments              = "Control the settings that minimize the information your website shares with clients and malicious entities to reduce your exposure to threats."
-    criteria_must_satisfy = "all"
-    children = [
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_allowed_methods.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_obfuscate_debug_info.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_obfuscate_backend_info.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_hsts.json,
-    ]
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_increase_availability" {
-  rules_v2023_01_05 {
-    name                  = "Increase availability"
-    comments              = "Control how to respond when your origin or third parties are slow or even down to minimize the negative impact on user experience."
-    criteria_must_satisfy = "all"
-    children = [
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_simulate_failover.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_site_failover.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_origin_health.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_script_management.json,
-    ]
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_minimize_payload" {
-  rules_v2023_01_05 {
-    name                  = "Minimize payload"
-    comments              = "Control the settings that reduce the size of the delivered content and decrease the number of bytes sent by your properties. This allows you to cut down the network overhead of your website or API."
-    criteria_must_satisfy = "all"
-    children = [
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_compressible_objects.json,
-    ]
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_traffic_reporting" {
-  rules_v2023_01_05 {
-    name                  = "Traffic reporting"
-    comments              = "Identify your main traffic segments so you can granularly zoom in your traffic statistics like hits, bandwidth, offload, response codes, and errors."
-    criteria_must_satisfy = "all"
     behavior {
       cp_code {
         value {
-          created_date = 1442260495000
-          description  = "jaescalo - DSA/ION & NetStorage"
-          id           = 1271126
-          name         = "jaescalo - DSA/ION & NetStorage"
-          products     = ["Fresca", "Site_Accel", ]
+          id = 407946
         }
       }
     }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_m_pulse_rum" {
-  rules_v2023_01_05 {
-    name                  = "mPulse RUM"
-    comments              = "Collect and analyze real-user data to monitor the performance of your website."
-    criteria_must_satisfy = "all"
     behavior {
-      m_pulse {
-        api_key         = ""
-        buffer_size     = ""
-        config_override = ""
-        enabled         = true
-        loader_version  = "V12"
-        require_pci     = false
-        title_optional  = ""
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_geolocation" {
-  rules_v2023_01_05 {
-    name                  = "Geolocation"
-    comments              = "Receive data about a user's geolocation and connection speed in a request header. If you change cached content based on the values of the X-Akamai-Edgescape request header, contact your account representative."
-    criteria_must_satisfy = "all"
-    criterion {
-      request_type {
-        match_operator = "IS"
-        value          = "CLIENT_REQ"
+      allow_post {
+        allow_without_content_length = false
+        enabled                      = true
       }
     }
     behavior {
-      edge_scape {
-        enabled = false
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_log_delivery" {
-  rules_v2023_01_05 {
-    name                  = "Log delivery"
-    comments              = "Specify the level of detail you want to be logged in your Log Delivery Service reports. Log User-Agent Header to obtain detailed information in the Traffic by Browser and OS report."
-    criteria_must_satisfy = "all"
-    behavior {
-      report {
-        log_accept_language  = false
-        log_cookies          = "OFF"
-        log_custom_log_field = false
-        log_edge_ip          = false
-        log_host             = false
-        log_referer          = false
-        log_user_agent       = false
-        log_x_forwarded_for  = false
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_origin_connectivity" {
-  rules_v2023_01_05 {
-    name                  = "Origin connectivity"
-    comments              = "Optimize the connection between edge and origin."
-    criteria_must_satisfy = "all"
-    behavior {
-      dns_async_refresh {
+      real_user_monitoring {
         enabled = true
-        timeout = "1h"
       }
     }
-    behavior {
-      timeout {
-        value = "5s"
-      }
-    }
-    behavior {
-      read_timeout {
-        value = "120s"
-      }
-    }
+    children = [
+      data.akamai_property_rules_builder.dev-gitlab-pipeline-demo_rule_performance.json,
+      data.akamai_property_rules_builder.dev-gitlab-pipeline-demo_rule_offload.json,
+    ]
   }
 }
 
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_protocol_optimizations" {
-  rules_v2023_01_05 {
-    name                  = "Protocol optimizations"
-    comments              = "Serve your website using modern and fast protocols."
+data "akamai_property_rules_builder" "dev-gitlab-pipeline-demo_rule_performance" {
+  rules_v2023_10_30 {
+    name                  = "Performance"
+    comments              = "Improves the performance of delivering objects to end users. Behaviors in this rule are applied to all requests as appropriate."
     criteria_must_satisfy = "all"
     behavior {
       enhanced_akamai_protocol {
@@ -296,116 +65,97 @@ data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_protocol_optimiz
       }
     }
     behavior {
-      sure_route {
-        enable_custom_key      = false
-        enabled                = true
-        force_ssl_forward      = false
-        race_stat_ttl          = "30m"
-        sr_download_link_title = ""
-        test_object_url        = "/akamai/sureroute-test-object.html"
-        to_host_status         = "INCOMING_HH"
-        type                   = "PERFORMANCE"
+      remove_vary {
+        enabled = true
       }
     }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_prefetching" {
-  rules_v2023_01_05 {
-    name                  = "Prefetching"
-    comments              = "Instruct edge servers to retrieve embedded resources before the browser requests them."
-    criteria_must_satisfy = "all"
-    children = [
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_prefetching_objects.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_prefetchable_objects.json,
-    ]
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_adaptive_acceleration" {
-  rules_v2023_01_05 {
-    name                  = "Adaptive acceleration"
-    comments              = "Automatically and continuously apply performance optimizations to your website using machine learning."
-    criteria_must_satisfy = "all"
     behavior {
-      adaptive_acceleration {
-        ab_logic                  = "DISABLED"
-        enable_brotli_compression = false
-        enable_preconnect         = true
-        enable_push               = true
-        enable_ro                 = false
-        preload_enable            = true
-        source                    = "mPulse"
-        title_http2_server_push   = ""
-        title_preconnect          = ""
-        title_preload             = ""
-        title_ro                  = ""
+      sure_route {
+        enable_custom_key = false
+        enabled           = true
+        force_ssl_forward = false
+        race_stat_ttl     = "30m"
+        test_object_url   = "/akamai/sure-route-test-object.html"
+        to_host_status    = "INCOMING_HH"
+        type              = "PERFORMANCE"
       }
     }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_prefetching_objects" {
-  rules_v2023_01_05 {
-    name                  = "Prefetching objects"
-    comments              = "Define for which HTML pages prefetching should be enabled."
-    criteria_must_satisfy = "all"
     behavior {
       prefetch {
         enabled = true
       }
     }
     children = [
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_bots.json,
+      data.akamai_property_rules_builder.dev-gitlab-pipeline-demo_rule_compressible_objects.json,
     ]
   }
 }
 
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_prefetchable_objects" {
-  rules_v2023_01_05 {
-    name                  = "Prefetchable objects"
-    comments              = "Define which resources should be prefetched."
+data "akamai_property_rules_builder" "dev-gitlab-pipeline-demo_rule_offload" {
+  rules_v2023_10_30 {
+    name                  = "Offload"
+    comments              = "Controls caching, which offloads traffic away from the origin. Most objects types are not cached. However, the child rules override this behavior for certain subsets of requests."
     criteria_must_satisfy = "all"
-    criterion {
-      file_extension {
-        match_case_sensitive = false
-        match_operator       = "IS_ONE_OF"
-        values               = ["css", "js", "jpg", "jpeg", "jp2", "png", "gif", "svg", "svgz", "webp", "eot", "woff", "woff2", "otf", "ttf", ]
+    behavior {
+      caching {
+        behavior        = "MAX_AGE"
+        must_revalidate = false
+        ttl             = "12d"
       }
     }
     behavior {
-      prefetchable {
+      cache_error {
+        enabled        = true
+        preserve_stale = true
+        ttl            = "10s"
+      }
+    }
+    behavior {
+      downstream_cache {
+        allow_behavior = "LESSER"
+        behavior       = "ALLOW"
+        send_headers   = "CACHE_CONTROL_AND_EXPIRES"
+        send_private   = false
+      }
+    }
+    behavior {
+      tiered_distribution {
         enabled = true
       }
     }
+    children = [
+      data.akamai_property_rules_builder.dev-gitlab-pipeline-demo_rule_css_and_java_script.json,
+      data.akamai_property_rules_builder.dev-gitlab-pipeline-demo_rule_static_objects.json,
+      data.akamai_property_rules_builder.dev-gitlab-pipeline-demo_rule_uncacheable_responses.json,
+    ]
   }
 }
 
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_bots" {
-  rules_v2023_01_05 {
-    name                  = "Bots"
-    comments              = "Disable prefetching for specific clients identifying themselves as bots and crawlers. This avoids requesting unnecessary resources from the origin."
+data "akamai_property_rules_builder" "dev-gitlab-pipeline-demo_rule_compressible_objects" {
+  rules_v2023_10_30 {
+    name                  = "Compressible Objects"
+    comments              = "Compresses content to improve performance of clients with slow connections. Applies Last Mile Acceleration to requests when the returned object supports gzip compression."
     criteria_must_satisfy = "all"
     criterion {
-      user_agent {
+      content_type {
         match_case_sensitive = false
         match_operator       = "IS_ONE_OF"
         match_wildcard       = true
-        values               = ["*bot*", "*crawl*", "*spider*", ]
+        values               = ["text/*", "application/javascript", "application/x-javascript", "application/x-javascript*", "application/json", "application/x-json", "application/*+json", "application/*+xml", "application/text", "application/vnd.microsoft.icon", "application/vnd-ms-fontobject", "application/x-font-ttf", "application/x-font-opentype", "application/x-font-truetype", "application/xmlfont/eot", "application/xml", "font/opentype", "font/otf", "font/eot", "image/svg+xml", "image/vnd.microsoft.icon", ]
       }
     }
     behavior {
-      prefetch {
-        enabled = false
+      gzip_response {
+        behavior = "ALWAYS"
       }
     }
   }
 }
 
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_css_and_java_script" {
-  rules_v2023_01_05 {
+data "akamai_property_rules_builder" "dev-gitlab-pipeline-demo_rule_css_and_java_script" {
+  rules_v2023_10_30 {
     name                  = "CSS and JavaScript"
-    comments              = "Override the default caching behavior for CSS and JavaScript"
+    comments              = "Overrides the default caching behavior for CSS and JavaScript objects that are cached on the edge server. Because these object types are dynamic, the TTL is brief."
     criteria_must_satisfy = "any"
     criterion {
       file_extension {
@@ -418,66 +168,33 @@ data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_css_and_java_scr
       caching {
         behavior        = "MAX_AGE"
         must_revalidate = false
-        ttl             = "2d"
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_fonts" {
-  rules_v2023_01_05 {
-    name                  = "Fonts"
-    comments              = "Override the default caching behavior for fonts."
-    criteria_must_satisfy = "any"
-    criterion {
-      file_extension {
-        match_case_sensitive = false
-        match_operator       = "IS_ONE_OF"
-        values               = ["eot", "woff", "woff2", "otf", "ttf", ]
+        ttl             = "66d"
       }
     }
     behavior {
-      caching {
-        behavior        = "MAX_AGE"
-        must_revalidate = false
-        ttl             = "30d"
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_images" {
-  rules_v2023_01_05 {
-    name                  = "Images"
-    comments              = "Override the default caching behavior for images."
-    criteria_must_satisfy = "any"
-    criterion {
-      file_extension {
-        match_case_sensitive = false
-        match_operator       = "IS_ONE_OF"
-        values               = ["jpg", "jpeg", "png", "gif", "webp", "jp2", "ico", "svg", "svgz", ]
+      prefresh_cache {
+        enabled     = true
+        prefreshval = 90
       }
     }
     behavior {
-      caching {
-        behavior        = "MAX_AGE"
-        must_revalidate = false
-        ttl             = "30d"
+      prefetchable {
+        enabled = true
       }
     }
   }
 }
 
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_files" {
-  rules_v2023_01_05 {
-    name                  = "Files"
-    comments              = "Override the default caching behavior for files. Files containing Personal Identified Information (PII) should require Edge authentication or not be cached at all."
+data "akamai_property_rules_builder" "dev-gitlab-pipeline-demo_rule_static_objects" {
+  rules_v2023_10_30 {
+    name                  = "Static Objects"
+    comments              = "Overrides the default caching behavior for images, music, and similar objects that are cached on the edge server. Because these object types are static, the TTL is long."
     criteria_must_satisfy = "any"
     criterion {
       file_extension {
         match_case_sensitive = false
         match_operator       = "IS_ONE_OF"
-        values               = ["pdf", "doc", "docx", "odt", ]
+        values               = ["aif", "aiff", "au", "avi", "bin", "bmp", "cab", "carb", "cct", "cdf", "class", "doc", "dcr", "dtd", "exe", "flv", "gcf", "gff", "gif", "grv", "hdml", "hqx", "ico", "ini", "jpeg", "jpg", "mov", "mp3", "nc", "pct", "pdf", "png", "ppc", "pws", "swa", "swf", "txt", "vbs", "w32", "wav", "wbmp", "wml", "wmlc", "wmls", "wmlsc", "xsd", "zip", "pict", "tif", "tiff", "mid", "midi", "ttf", "eot", "woff", "woff2", "otf", "svg", "svgz", "webp", "jxr", "jar", "jp2", ]
       }
     }
     behavior {
@@ -487,114 +204,24 @@ data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_files" {
         ttl             = "7d"
       }
     }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_other_static_objects" {
-  rules_v2023_01_05 {
-    name                  = "Other static objects"
-    comments              = "Override the default caching behavior for other static objects."
-    criteria_must_satisfy = "any"
-    criterion {
-      file_extension {
-        match_case_sensitive = false
-        match_operator       = "IS_ONE_OF"
-        values               = ["aif", "aiff", "au", "avi", "bin", "bmp", "cab", "carb", "cct", "cdf", "class", "dcr", "dtd", "exe", "flv", "gcf", "gff", "grv", "hdml", "hqx", "ini", "mov", "mp3", "nc", "pct", "ppc", "pws", "swa", "swf", "txt", "vbs", "w32", "wav", "midi", "wbmp", "wml", "wmlc", "wmls", "wmlsc", "xsd", "zip", "pict", "tif", "tiff", "mid", "jxr", "jar", ]
+    behavior {
+      prefresh_cache {
+        enabled     = true
+        prefreshval = 90
       }
     }
     behavior {
-      caching {
-        behavior        = "MAX_AGE"
-        must_revalidate = false
-        ttl             = "7d"
+      prefetchable {
+        enabled = true
       }
     }
   }
 }
 
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_html_pages" {
-  rules_v2023_01_05 {
-    name                  = "HTML pages"
-    comments              = "Override the default caching behavior for HTML pages cached on edge servers."
-    criteria_must_satisfy = "all"
-    criterion {
-      file_extension {
-        match_case_sensitive = false
-        match_operator       = "IS_ONE_OF"
-        values               = ["html", "htm", "php", "jsp", "aspx", "EMPTY_STRING", ]
-      }
-    }
-    behavior {
-      caching {
-        behavior = "NO_STORE"
-      }
-    }
-    behavior {
-      cache_key_query_params {
-        behavior    = "IGNORE"
-        exact_match = true
-        parameters  = ["gclid", "fbclid", "utm_source", "utm_campaign", "utm_medium", "utm_content", ]
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_redirects" {
-  rules_v2023_01_05 {
-    name                  = "Redirects"
-    comments              = "Configure caching for HTTP redirects. The redirect is cached for the same TTL as a 200 HTTP response when this feature is enabled."
-    criteria_must_satisfy = "all"
-    behavior {
-      cache_redirect {
-        enabled = "false"
-      }
-    }
-    behavior {
-      chase_redirects {
-        enabled = false
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_post_responses" {
-  rules_v2023_01_05 {
-    name                  = "POST responses"
-    comments              = "Define when HTTP POST requests should be cached. You should enable it under a criteria match."
-    criteria_must_satisfy = "all"
-    behavior {
-      cache_post {
-        enabled = false
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_graph_ql" {
-  rules_v2023_01_05 {
-    name                  = "GraphQL"
-    comments              = "Define when your GraphQL queries should be cached."
-    criteria_must_satisfy = "all"
-    criterion {
-      path {
-        match_case_sensitive = false
-        match_operator       = "MATCHES_ONE_OF"
-        normalize            = false
-        values               = ["/graphql", ]
-      }
-    }
-    behavior {
-      graphql_caching {
-        enabled = false
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_uncacheable_objects" {
-  rules_v2023_01_05 {
-    name                  = "Uncacheable objects"
-    comments              = "Configure the default client caching behavior for uncacheable content at the edge."
+data "akamai_property_rules_builder" "dev-gitlab-pipeline-demo_rule_uncacheable_responses" {
+  rules_v2023_10_30 {
+    name                  = "Uncacheable Responses"
+    comments              = "Overrides the default downstream caching behavior for uncacheable object types. Instructs the edge server to pass Cache-Control and/or Expire headers from the origin to the client."
     criteria_must_satisfy = "all"
     criterion {
       cacheability {
@@ -604,247 +231,7 @@ data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_uncacheable_obje
     }
     behavior {
       downstream_cache {
-        behavior = "BUST"
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_allowed_methods" {
-  rules_v2023_01_05 {
-    name                  = "Allowed methods"
-    comments              = "Allow the use of HTTP methods. Consider enabling additional methods under a path match for increased origin security."
-    criteria_must_satisfy = "all"
-    behavior {
-      all_http_in_cache_hierarchy {
-        enabled = true
-      }
-    }
-    children = [
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_post.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_options.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_put.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_delete.json,
-      data.akamai_property_rules_builder.gitops-prod-demo-com_rule_patch.json,
-    ]
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_obfuscate_debug_info" {
-  rules_v2023_01_05 {
-    name                  = "Obfuscate debug info"
-    comments              = "Do not expose back-end information unless the request contains the Pragma debug header."
-    criteria_must_satisfy = "all"
-    behavior {
-      cache_tag_visible {
-        behavior = "PRAGMA_HEADER"
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_obfuscate_backend_info" {
-  rules_v2023_01_05 {
-    name                  = "Obfuscate backend info"
-    comments              = "Do not expose back-end information unless the request contains an additional secret header. Regularly change the criteria to use a specific unique value for the secret header."
-    criteria_must_satisfy = "all"
-    criterion {
-      request_header {
-        header_name                = "X-Akamai-Debug"
-        match_case_sensitive_value = true
-        match_operator             = "IS_NOT_ONE_OF"
-        match_wildcard_name        = false
-        match_wildcard_value       = false
-        values                     = ["true", ]
-      }
-    }
-    behavior {
-      modify_outgoing_response_header {
-        action                      = "DELETE"
-        custom_header_name          = "X-Powered-By"
-        standard_delete_header_name = "OTHER"
-      }
-    }
-    behavior {
-      modify_outgoing_response_header {
-        action                      = "DELETE"
-        custom_header_name          = "Server"
-        standard_delete_header_name = "OTHER"
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_hsts" {
-  rules_v2023_01_05 {
-    name                  = "HSTS"
-    comments              = "Require all browsers to connect to your site using HTTPS."
-    criteria_must_satisfy = "all"
-    behavior {
-      http_strict_transport_security {
-        enable = false
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_post" {
-  rules_v2023_01_05 {
-    name                  = "POST"
-    comments              = "Allow use of the POST HTTP request method."
-    criteria_must_satisfy = "all"
-    behavior {
-      allow_post {
-        allow_without_content_length = false
-        enabled                      = true
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_options" {
-  rules_v2023_01_05 {
-    name                  = "OPTIONS"
-    comments              = "Allow use of the OPTIONS HTTP request method."
-    criteria_must_satisfy = "all"
-    behavior {
-      allow_options {
-        enabled = true
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_put" {
-  rules_v2023_01_05 {
-    name                  = "PUT"
-    comments              = "Allow use of the PUT HTTP request method."
-    criteria_must_satisfy = "all"
-    behavior {
-      allow_put {
-        enabled = false
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_delete" {
-  rules_v2023_01_05 {
-    name                  = "DELETE"
-    comments              = "Allow use of the DELETE HTTP request method."
-    criteria_must_satisfy = "all"
-    behavior {
-      allow_delete {
-        enabled = false
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_patch" {
-  rules_v2023_01_05 {
-    name                  = "PATCH"
-    comments              = "Allow use of the PATCH HTTP request method."
-    criteria_must_satisfy = "all"
-    behavior {
-      allow_patch {
-        enabled = false
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_simulate_failover" {
-  rules_v2023_01_05 {
-    name                  = "Simulate failover"
-    comments              = "Simulate an origin connection problem and test the site failover configuration on the CDN staging network."
-    criteria_must_satisfy = "all"
-    criterion {
-      content_delivery_network {
-        match_operator = "IS"
-        network        = "STAGING"
-      }
-    }
-    criterion {
-      request_header {
-        header_name                = "breakconnection"
-        match_case_sensitive_value = true
-        match_operator             = "IS_ONE_OF"
-        match_wildcard_name        = false
-        match_wildcard_value       = false
-        values                     = ["Your-Secret-Here", ]
-      }
-    }
-    behavior {
-      break_connection {
-        enabled = true
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_site_failover" {
-  rules_v2023_01_05 {
-    name                  = "Site failover"
-    comments              = "Specify how edge servers respond when the origin is not available."
-    criteria_must_satisfy = "any"
-    criterion {
-      origin_timeout {
-        match_operator = "ORIGIN_TIMED_OUT"
-      }
-    }
-    behavior {
-      fail_action {
-        enabled = false
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_origin_health" {
-  rules_v2023_01_05 {
-    name                  = "Origin health"
-    comments              = "Monitor the health of your origin by tracking unsuccessful IP connection attempts."
-    criteria_must_satisfy = "all"
-    behavior {
-      health_detection {
-        maximum_reconnects = 3
-        retry_count        = 3
-        retry_interval     = "10s"
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_script_management" {
-  rules_v2023_01_05 {
-    name                  = "Script management"
-    comments              = "Enable Script Management to minimize performance and availability impacts from third-party JavaScripts."
-    criteria_must_satisfy = "all"
-    behavior {
-      script_management {
-        enabled = false
-      }
-    }
-  }
-}
-
-data "akamai_property_rules_builder" "gitops-prod-demo-com_rule_compressible_objects" {
-  rules_v2023_01_05 {
-    name                  = "Compressible objects"
-    comments              = "Serve gzip compressed content for text-based formats."
-    criteria_must_satisfy = "all"
-    criterion {
-      content_type {
-        match_case_sensitive = false
-        match_operator       = "IS_ONE_OF"
-        match_wildcard       = true
-        values               = ["application/*javascript*", "application/*json*", "application/*xml*", "application/text*", "application/vnd-ms-fontobject", "application/vnd.microsoft.icon", "application/x-font-opentype", "application/x-font-truetype", "application/x-font-ttf", "application/xmlfont/eot", "font/eot", "font/opentype", "font/otf", "image/svg+xml", "image/vnd.microsoft.icon", "image/x-icon", "text/*", "application/octet-stream*", "application/x-font-eot*", "font/ttf", "application/font-ttf", "application/font-sfnt", "application/x-tgif", ]
-      }
-    }
-    behavior {
-      gzip_response {
-        behavior = "ALWAYS"
+        behavior = "TUNNEL_ORIGIN"
       }
     }
   }

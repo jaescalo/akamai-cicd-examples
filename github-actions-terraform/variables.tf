@@ -2,20 +2,21 @@ variable "akamai_client_secret" {}
 variable "akamai_host" {}
 variable "akamai_access_token" {}
 variable "akamai_client_token" {}
+variable "akamai_account_key" {}
 
-variable "config_section" {
+variable "edgerc" {
   type    = string
   default = "default"
 }
 
-variable "env" {
+variable "section" {
   type    = string
-  default = "staging"
+  default = "default"
 }
 
 variable "group_name" {
   type    = string
-  default = "JAESCALO Testing"
+  default = ""
 }
 
 variable "contract_id" {
@@ -25,17 +26,22 @@ variable "contract_id" {
 
 variable "edge_hostname" {
   type    = string
-  default = "jaescalo.test.edgekey.net"
+  default = ""
 }
 
 variable "property_name" {
   type    = string
-  default = "gitops-prod.demo.com"
+  default = ""
+}
+
+variable "activation_notes" {
+  type    = string
+  default = "Activated by GitHub Workflow"
 }
 
 variable "hostname" {
   type    = string
-  default = "gitops-prod.demo.com"
+  default = ""
 }
 
 variable "emails" {
